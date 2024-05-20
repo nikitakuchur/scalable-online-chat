@@ -69,7 +69,7 @@ public class RefreshTokenService {
      *
      * @param username the username
      */
-    public void revokeAllByUser(String username) {
+    public void revokeAllByUsername(String username) {
         refreshTokenRepository.deleteAllByUsername(username);
     }
 }

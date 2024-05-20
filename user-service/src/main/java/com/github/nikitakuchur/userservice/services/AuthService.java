@@ -177,6 +177,6 @@ public class AuthService {
      * @param username the username
      */
     public void killAllSessions(String username) {
-        refreshTokenService.revokeAllByUser(username);
+        refreshTokenService.revokeAllByUsername(username);
     }
 }
