@@ -2,7 +2,6 @@ package com.github.nikitakuchur.userservice.services;
 
 import com.github.nikitakuchur.userservice.exceptions.RefreshTokenExpiredException;
 import com.github.nikitakuchur.userservice.exceptions.RefreshTokenNotFoundException;
-import com.github.nikitakuchur.userservice.exceptions.RefreshTokenRevokedException;
 import com.github.nikitakuchur.userservice.jwt.TokenPair;
 import com.github.nikitakuchur.userservice.model.RefreshToken;
 import com.github.nikitakuchur.userservice.model.User;
@@ -94,7 +93,6 @@ public class AuthService {
                 .token(UUID.randomUUID().toString().replace("-", ""))
                 .sessionId(sessionId)
                 .expiration(timestamp.plus(refreshTokenLifetime, ChronoUnit.MINUTES))
-                .invalidated(false)
                 .build();
         refreshTokenService.save(refreshToken);
         return refreshToken.getToken();
@@ -103,17 +101,12 @@ public class AuthService {
     /**
      * Generates a new pair of tokens based on the given refresh token.
      * The given refresh token will be invalidated after executing this method.
-     * <p>
-     * If the refresh token has been previously revoked and the user is trying to use it
-     * to generate a new pair of tokens, it's likely that the refresh token has been stolen.
-     * Therefore, this method will revoke all the tokens attached to the session immediately.
      *
      * @param refreshToken the refresh token
-     * @return a pair of tokens: an access token and a refresh token
+     * @return a new pair of tokens: an access token and a refresh token
      * @throws RefreshTokenNotFoundException if the refresh token does not exist
      * @throws UsernameNotFoundException if the user that owns the token does not exist
      * @throws RefreshTokenExpiredException if the given refresh token has expired
-     * @throws RefreshTokenRevokedException if the given refresh has been already revoked
      */
     public TokenPair refreshToken(String refreshToken) {
         return refreshTokenService.findByToken(refreshToken)
@@ -122,8 +115,7 @@ public class AuthService {
                     Instant timestamp = Instant.now();
 
                     verifyRefreshToken(token);
-                    token.setInvalidated(true);
-                    refreshTokenService.save(token);
+                    refreshTokenService.revoke(token);
 
                     String username = token.getUsername();
                     return userService.findByUsername(username)
@@ -131,23 +123,15 @@ public class AuthService {
                                 String newAccessToken = createAccessToken(user, sessionId, timestamp);
                                 String newRefreshToken = createRefreshToken(user, sessionId, timestamp);
                                 return new TokenPair(newAccessToken, newRefreshToken);
-                            }).orElseThrow(() -> new UsernameNotFoundException("User has not been found. Username=" + username));
-                }).orElseThrow(() -> new RefreshTokenNotFoundException("Refresh token not found. RefreshToken=" + refreshToken));
+                            }).orElseThrow(() -> new UsernameNotFoundException("User not found. Username=" + username));
+                }).orElseThrow(() -> new RefreshTokenNotFoundException("Refresh token not found."));
     }
 
     private void verifyRefreshToken(RefreshToken token) {
         if (isTokenExpired(token)) {
             log.warn("Refresh token expired. Username={}", token.getUsername());
-            token.setInvalidated(true);
-            refreshTokenService.save(token);
+            refreshTokenService.revoke(token);
             throw new RefreshTokenExpiredException("The refresh token has expired. Please, log in again.");
-        }
-        if (token.isInvalidated()) {
-            log.warn("Suspicious activity detected! The refresh token is being reused. Username={}", token.getUsername());
-            // revoke all refresh tokens attached to the current session
-            refreshTokenService.revokeAllBySessionId(token.getSessionId());
-            throw new RefreshTokenRevokedException("Suspicious activity detected! The refresh token is being reused. " +
-                    "All refresh tokens have been revoked. Please, log in again.");
         }
     }
 
@@ -168,7 +152,7 @@ public class AuthService {
      */
     public List<String> getSessions(String username) {
         return refreshTokenService.findByUsername(username).stream()
-                .filter(t -> !t.isInvalidated() && !isTokenExpired(t))
+                .filter(t -> !isTokenExpired(t))
                 .map(RefreshToken::getSessionId)
                 .distinct()
                 .toList();

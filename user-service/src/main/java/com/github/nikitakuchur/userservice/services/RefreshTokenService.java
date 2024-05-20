@@ -27,6 +27,15 @@ public class RefreshTokenService {
     }
 
     /**
+     * Revokes the given refresh token from the database.
+     *
+     * @param refreshToken the refresh token to delete
+     */
+    public void revoke(RefreshToken refreshToken) {
+        refreshTokenRepository.delete(refreshToken);
+    }
+
+    /**
      * Finds refresh token details by the corresponding token.
      *
      * @param token the token to find
@@ -43,28 +52,24 @@ public class RefreshTokenService {
      * @return a list of refresh tokens
      */
     public List<RefreshToken> findByUsername(String username) {
-        return refreshTokenRepository.findByUsername(username);
+        return refreshTokenRepository.findAllByUsername(username);
     }
 
     /**
-     * Revokes all refresh tokens attached to the given session.
+     * Deletes all refresh tokens attached to the given session.
      *
      * @param sessionId the session ID
      */
     public void revokeAllBySessionId(String sessionId) {
-        var tokens = refreshTokenRepository.findBySessionId(sessionId);
-        tokens.forEach(t -> t.setInvalidated(true));
-        refreshTokenRepository.saveAll(tokens);
+        refreshTokenRepository.deleteAllBySessionId(sessionId);
     }
 
     /**
-     * Revokes all refresh tokens associated with the given session.
+     * Revokes all refresh tokens associated with the given username.
      *
      * @param username the username
      */
     public void revokeAllByUser(String username) {
-        var tokens = refreshTokenRepository.findByUsername(username);
-        tokens.forEach(t -> t.setInvalidated(true));
-        refreshTokenRepository.saveAll(tokens);
+        refreshTokenRepository.deleteAllByUsername(username);
     }
 }

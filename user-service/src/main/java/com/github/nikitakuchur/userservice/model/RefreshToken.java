@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 
@@ -21,9 +22,12 @@ import java.time.Instant;
 public class RefreshToken {
     @MongoId
     private String id;
+
     private String username;
+
+    @Indexed(unique = true)
     private String token;
+
     private String sessionId;
     private Instant expiration;
-    private boolean invalidated;
 }

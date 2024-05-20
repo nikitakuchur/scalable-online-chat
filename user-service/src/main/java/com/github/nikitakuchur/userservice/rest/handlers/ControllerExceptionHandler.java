@@ -2,7 +2,6 @@ package com.github.nikitakuchur.userservice.rest.handlers;
 
 import com.github.nikitakuchur.userservice.exceptions.RefreshTokenExpiredException;
 import com.github.nikitakuchur.userservice.exceptions.RefreshTokenNotFoundException;
-import com.github.nikitakuchur.userservice.exceptions.RefreshTokenRevokedException;
 import com.github.nikitakuchur.userservice.exceptions.UserAlreadyExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,8 +27,7 @@ public class ControllerExceptionHandler {
     @ExceptionHandler({
             BadCredentialsException.class,
             RefreshTokenNotFoundException.class,
-            RefreshTokenExpiredException.class,
-            RefreshTokenRevokedException.class
+            RefreshTokenExpiredException.class
     })
     protected ResponseEntity<Object> handleUserAlreadyExists(RuntimeException e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());

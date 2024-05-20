@@ -117,7 +117,6 @@ class UserControllerIntegrationTest extends IntegrationTest {
 
         var refreshTokenResult = mockMvc.perform(post("/api/refresh-token")
                         .contentType("application/json")
-                        .header("Authorization", "Bearer " + tokens.get("accessToken"))
                         .content(toJson(Map.of(
                                 "refreshToken", tokens.get("refreshToken")
                         ))))
@@ -144,7 +143,6 @@ class UserControllerIntegrationTest extends IntegrationTest {
 
         mockMvc.perform(post("/api/refresh-token")
                         .contentType("application/json")
-                        .header("Authorization", "Bearer " + tokens.get("accessToken"))
                         .content(toJson(Map.of(
                                 "refreshToken", tokens.get("refreshToken")
                         ))))
@@ -153,7 +151,6 @@ class UserControllerIntegrationTest extends IntegrationTest {
 
         mockMvc.perform(post("/api/refresh-token")
                         .contentType("application/json")
-                        .header("Authorization", "Bearer " + tokens.get("accessToken"))
                         .content(toJson(Map.of(
                                 "refreshToken", tokens.get("refreshToken")
                         ))))
@@ -181,7 +178,6 @@ class UserControllerIntegrationTest extends IntegrationTest {
 
         mockMvc.perform(post("/api/refresh-token")
                         .contentType("application/json")
-                        .header("Authorization", "Bearer " + tokens.get("accessToken"))
                         .content(toJson(Map.of(
                                 "refreshToken", tokens.get("refreshToken")
                         ))))
@@ -219,7 +215,6 @@ class UserControllerIntegrationTest extends IntegrationTest {
 
         mockMvc.perform(post("/api/refresh-token")
                         .contentType("application/json")
-                        .header("Authorization", "Bearer " + tokens1.get("accessToken"))
                         .content(toJson(Map.of(
                                 "refreshToken", tokens1.get("refreshToken")
                         ))))
@@ -228,7 +223,6 @@ class UserControllerIntegrationTest extends IntegrationTest {
 
         mockMvc.perform(post("/api/refresh-token")
                         .contentType("application/json")
-                        .header("Authorization", "Bearer " + tokens2.get("accessToken"))
                         .content(toJson(Map.of(
                                 "refreshToken", tokens2.get("refreshToken")
                         ))))
@@ -261,7 +255,6 @@ class UserControllerIntegrationTest extends IntegrationTest {
 
         mockMvc.perform(post("/api/refresh-token")
                         .contentType("application/json")
-                        .header("Authorization", "Bearer " + tokens1.get("accessToken"))
                         .content(toJson(Map.of(
                                 "refreshToken", tokens1.get("refreshToken")
                         ))))
@@ -270,7 +263,6 @@ class UserControllerIntegrationTest extends IntegrationTest {
 
         mockMvc.perform(post("/api/refresh-token")
                         .contentType("application/json")
-                        .header("Authorization", "Bearer " + tokens1.get("accessToken"))
                         .content(toJson(Map.of(
                                 "refreshToken", tokens1.get("refreshToken")
                         ))))
@@ -279,7 +271,6 @@ class UserControllerIntegrationTest extends IntegrationTest {
 
         mockMvc.perform(post("/api/refresh-token")
                         .contentType("application/json")
-                        .header("Authorization", "Bearer " + tokens2.get("accessToken"))
                         .content(toJson(Map.of(
                                 "refreshToken", tokens2.get("refreshToken")
                         ))))
@@ -428,7 +419,6 @@ class UserControllerIntegrationTest extends IntegrationTest {
 
         mockMvc.perform(post("/api/refresh-token")
                         .contentType("application/json")
-                        .header("Authorization", "Bearer " + tokens.get("accessToken"))
                         .content(toJson(Map.of(
                                 "refreshToken", tokens.get("refreshToken")
                         ))))
