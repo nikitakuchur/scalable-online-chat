@@ -29,6 +29,8 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(HttpMethod.POST, "/api/signup", "/api/login", "/api/refresh-token")
                         .permitAll()
+                        .requestMatchers(HttpMethod.GET, "/error")
+                        .permitAll()
                         .anyRequest()
                         .authenticated()
                 )
