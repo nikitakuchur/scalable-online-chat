@@ -1,0 +1,13 @@
+# User Manager
+This application is responsible for accessing and managing chats. It allows users to create, update, and delete chats. 
+This service is secure, and a user needs to acquire a JWT token before accessing any endpoints.
+
+## Technologies Used
+
+- [Spring Boot](https://spring.io/projects/spring-boot)
+- [MongoDB](https://www.mongodb.com/)
+- [Java JWT](https://github.com/jwtk/jjwt)
+- [Lombok](https://projectlombok.org/)
+- [Hibernate Validator](https://hibernate.org/validator/)
+- [JUnit](https://junit.org/junit5/)
+- [Testcontainers](https://testcontainers.com/)
