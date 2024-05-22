@@ -2,16 +2,14 @@ package com.github.nikitakuchur.userservice.model.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import org.hibernate.validator.constraints.Length;
 
 /**
  * A representation of a login request.
  */
 @Data
 public class LoginRequest {
-    @NotBlank
+    @NotBlank(message = "A username cannot be empty")
     private String username;
-    @NotBlank
-    @Length(min = 8)
+    @NotBlank(message = "A password cannot be empty")
     private String password;
 }

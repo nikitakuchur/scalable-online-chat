@@ -11,12 +11,12 @@ import org.hibernate.validator.constraints.Length;
  */
 @Data
 public class SignupRequest {
-    @Email
+    @NotBlank(message = "Email cannot be empty")
+    @Email(message = "Please enter a valid email")
     private String email;
-    @NotBlank
-    @Pattern(regexp = "^\\S*$", message = "The username cannot contain any whitespaces")
+    @NotBlank(message = "A username cannot be empty")
+    @Pattern(regexp = "^\\S*$", message = "A username cannot contain any whitespace characters")
     private String username;
-    @NotBlank
-    @Length(min = 8)
+    @Length(min = 8, message = "A password must be at least 8 characters in length")
     private String password;
 }
