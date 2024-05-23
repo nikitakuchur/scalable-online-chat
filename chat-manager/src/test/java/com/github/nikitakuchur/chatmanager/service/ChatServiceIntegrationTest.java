@@ -40,7 +40,7 @@ class ChatServiceIntegrationTest extends IntegrationTest {
 
         Chat chat1 = mongoTemplate.save(Chat.builder()
                 .id("1")
-                .name("Test chat #1")
+                .name("Cats")
                 .description("This is a test chat #1.")
                 .owner("user1")
                 .build());
@@ -48,7 +48,7 @@ class ChatServiceIntegrationTest extends IntegrationTest {
 
         Chat chat2 = mongoTemplate.save(Chat.builder()
                 .id("2")
-                .name("Test chat #2")
+                .name("Dogs")
                 .description("This is a test chat #2.")
                 .owner("user2")
                 .build());
@@ -173,7 +173,7 @@ class ChatServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getAllChatsTest() {
-        Page<Chat> allChats = chatService.getAllChats(PageRequest.ofSize(10));
+        Page<Chat> allChats = chatService.search(null, null, PageRequest.ofSize(10));
 
         assertNotNull(allChats);
         assertEquals(2, allChats.getTotalElements());
@@ -181,7 +181,15 @@ class ChatServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getUserChatsTest() {
-        Page<Chat> userChats = chatService.getChatsByOwner("user1", PageRequest.ofSize(10));
+        Page<Chat> userChats = chatService.search(null, "user1", PageRequest.ofSize(10));
+
+        assertNotNull(userChats);
+        assertEquals(1, userChats.getTotalElements());
+    }
+
+    @Test
+    void getChatsBySearchPhraseTest() {
+        Page<Chat> userChats = chatService.search("cats", null, PageRequest.ofSize(10));
 
         assertNotNull(userChats);
         assertEquals(1, userChats.getTotalElements());

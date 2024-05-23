@@ -37,11 +37,8 @@ public class ChatController {
     }
 
     @GetMapping("/chats")
-    public Page<Chat> getChats(@RequestParam(required = false) String username, Pageable pageable) {
-        if (username != null) {
-            return chatService.getChatsByOwner(username, pageable);
-        }
-        return chatService.getAllChats(pageable);
+    public Page<Chat> search(String searchPhrase, String owner, Pageable pageable) {
+        return chatService.search(searchPhrase, owner, pageable);
     }
 
     @GetMapping("/chats/{id}/messages")

@@ -8,7 +8,7 @@ import lombok.Data;
  */
 @Data
 public class ChatInfoRequest {
-    @NotBlank
+    @NotBlank(message = "A chat name cannot be empty")
     private String name;
     private String description;
 }

@@ -86,24 +86,16 @@ public class ChatService {
     }
 
     /**
-     * Finds all the chats of the given user.
+     * Finds all the chats that satisfy the given search phrase and have been created by the given user.
+     * If the search phrase is null, it will be ignored, and the same applies to the owner.
      *
-     * @param owner     the username of the owner
-     * @param pageable  pageable
-     * @return a list of chats
+     * @param searchPhrase  the search phrase
+     * @param owner         the username of the owner
+     * @param pageable      pageable
+     * @return a page of chats
      */
-    public Page<Chat> getChatsByOwner(String owner, Pageable pageable) {
-        return chatRepository.findAllByOwner(owner, pageable);
-    }
-
-    /**
-     * Finds all chats.
-     *
-     * @param pageable pageable
-     * @return a list of chats
-     */
-    public Page<Chat> getAllChats(Pageable pageable) {
-        return chatRepository.findAll(pageable);
+    public Page<Chat> search(String searchPhrase, String owner, Pageable pageable) {
+        return chatRepository.search(searchPhrase, owner, pageable);
     }
 
     /**
@@ -111,7 +103,7 @@ public class ChatService {
      *
      * @param chatId    the chat ID
      * @param pageable  pageable
-     * @return a list of messages
+     * @return a page of messages
      */
     public Page<Message> getMessages(String chatId, Pageable pageable) {
         return messageRepository.findAllByChatId(chatId, pageable);

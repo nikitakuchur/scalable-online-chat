@@ -31,7 +31,7 @@ public class ControllerExceptionHandler {
     protected ResponseEntity<Object> handleMethodArgumentNotValid(BindingResult result) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(result.getFieldErrors().stream()
-                        .collect(Collectors.toMap(FieldError::getField, this::getErrorMessage)));
+                        .collect(Collectors.toMap(FieldError::getField, this::getErrorMessage, (a, b) -> a)));
     }
 
     private String getErrorMessage(FieldError error) {
