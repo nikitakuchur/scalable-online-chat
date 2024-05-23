@@ -7,7 +7,7 @@ import {
 import NextLink from "next/link";
 
 import { ThemeSwitch } from "@/components/theme-switch";
-import {Button} from "@nextui-org/button";
+import LogoutButton from "@/components/logout-button";
 
 export const Navbar = () => {
 	return (
@@ -21,9 +21,7 @@ export const Navbar = () => {
 			</NavbarContent>
 			<NavbarContent className="basis-1 pl-4" justify="end">
 				<ThemeSwitch />
-				<NextLink href="/logout">
-					<Button variant="bordered" size="sm">Log out</Button>
-				</NextLink>
+				<LogoutButton />
 			</NavbarContent>
 		</NextUINavbar>
 	);
