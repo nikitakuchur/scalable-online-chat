@@ -35,7 +35,7 @@ public class RouteConfiguration {
 
     @Bean
     public RedisRateLimiter redisRateLimiter() {
-        // 5 requests per second
-        return new RedisRateLimiter(5, 5, 1);
+        // 10 requests per second
+        return new RedisRateLimiter(10, 10, 1);
     }
 }
