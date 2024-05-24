@@ -18,6 +18,8 @@ public class RouteConfiguration {
     private String userServiceUrl;
     @Value("${chat-gateway.chat-manager.url}")
     private String chatManagerUrl;
+    @Value("${chat-gateway.chat-service.url}")
+    private String chatServiceUrl;
 
     @Bean
     public RouteLocator routeLocator(RouteLocatorBuilder builder) {
@@ -30,6 +32,10 @@ public class RouteConfiguration {
                         .path("/api/chats/**")
                         .filters(f -> f.requestRateLimiter(c -> c.setKeyResolver(clientAddressResolver)))
                         .uri(chatManagerUrl))
+                .route(r -> r
+                        .path("/ws")
+                        .filters(f -> f.requestRateLimiter(c -> c.setKeyResolver(clientAddressResolver)))
+                        .uri(chatServiceUrl))
                 .build();
     }
 
