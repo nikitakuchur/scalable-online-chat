@@ -17,7 +17,7 @@ public class SecurityConfiguration {
         return http.cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers(HttpMethod.GET, "/chat", "/error")
+                        .requestMatchers(HttpMethod.GET, "/ws", "/error")
                         .permitAll()
                         .anyRequest()
                         .authenticated()
