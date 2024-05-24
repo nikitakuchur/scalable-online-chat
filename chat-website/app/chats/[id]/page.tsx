@@ -9,11 +9,13 @@ import {AuthContext} from "@/app/providers";
 import {useParams} from "next/navigation";
 import {jwtFetch, retrieveTokens} from "@/utils/jwt-fetch";
 import {Spinner} from "@nextui-org/spinner";
+import moment, {now} from "moment";
 
 interface Message {
 	id?: string,
 	sender?: string,
 	text: string,
+	timestamp?: string,
 }
 
 export default function ChatPage() {
@@ -115,6 +117,14 @@ export default function ChatPage() {
 		setText("");
 	}
 
+	function calculateTimestamp(message: Message) {
+		const timestamp = moment(message.timestamp!);
+		if (timestamp.isSame(now(), 'day')) {
+			return timestamp.format("hh:mm");
+		}
+		return timestamp.format("DD.MM.YYYY hh:mm");
+	}
+
 	return (
 		<div className="flex flex-col w-full h-full">
 			<h2 className="text-center text-2xl font-bold leading-9 tracking-tight">{chatName}</h2>
@@ -122,8 +132,9 @@ export default function ChatPage() {
 				{messages.map(message =>
 					<Card key={message.id} className={"max-w-96 shrink-0 " + (message.sender !== user?.sub ? "self-start" : "self-end")} shadow="sm">
 						{ message.sender !== user?.sub && (<CardHeader className="text-xs pb-0">{message.sender}</CardHeader>)}
-						<CardBody>
+						<CardBody className="flex flex-col gap-x-4 items-end">
 							<p>{message.text}</p>
+							<div className="text-xs pt-0 text-gray-400">{calculateTimestamp(message)}</div>
 						</CardBody>
 					</Card>
 				)}
