@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const API_URL = process.env.API_URL
+const WS_API_URL = process.env.WS_API_URL
 
 const nextConfig = {
   async rewrites() {
@@ -7,7 +8,7 @@ const nextConfig = {
       {
         source: '/api/:path*',
         destination: `${API_URL}/api/:path*`,
-      },
+      }
     ]
   },
 }

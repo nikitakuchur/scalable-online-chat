@@ -1,3 +1,7 @@
+/**
+ * This is a smarter version of a standard fetch. If it tries to retrieve some data and discovers
+ * that the token has expired, it obtains a new pair of tokens and retries the data retrieval.
+ */
 export const jwtFetch: typeof fetch = async (url, params) => {
     const accessToken = localStorage.getItem("accessToken");
     (params?.headers as any)["Authorization"] = `Bearer ${accessToken}`;
@@ -23,6 +27,7 @@ const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
 
 /**
  * Retrieves access and refresh token and puts them into the local storage.
+ * Note: The local storage is not the best place to store tokens, but it's OK for this app.
  */
 export async function retrieveTokens() {
     console.log("Retrieving tokens...")

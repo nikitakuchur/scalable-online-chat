@@ -62,7 +62,7 @@ export default function ChatPage() {
 		}
 
 		const client = new Client({
-			brokerURL: 'ws://localhost:8083/chat',
+			brokerURL: process.env.NEXT_PUBLIC_WS_API_URL,
 			beforeConnect: () => {
 				const accessToken = localStorage.getItem("accessToken");
 				client.connectHeaders = {
