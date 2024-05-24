@@ -1,5 +1,6 @@
 package com.github.nikitakuchur.chatmanager.rest;
 
+import com.github.nikitakuchur.chatmanager.exceptions.ChatNotFoundException;
 import com.github.nikitakuchur.chatmanager.jwt.JwtUser;
 import com.github.nikitakuchur.chatmanager.models.Chat;
 import com.github.nikitakuchur.chatmanager.models.Message;
@@ -39,6 +40,12 @@ public class ChatController {
     @GetMapping("/chats")
     public Page<Chat> search(String searchPhrase, String owner, Pageable pageable) {
         return chatService.search(searchPhrase, owner, pageable);
+    }
+
+    @GetMapping("/chats/{id}")
+    public Chat getChat(@PathVariable String id) {
+        return chatService.getChat(id)
+                .orElseThrow(() -> new ChatNotFoundException("The chat with id=" + id + " not found."));
     }
 
     @GetMapping("/chats/{id}/messages")

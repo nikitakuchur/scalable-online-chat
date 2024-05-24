@@ -13,6 +13,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 /**
  * A service responsible for managing chats.
  */
@@ -96,6 +98,16 @@ public class ChatService {
      */
     public Page<Chat> search(String searchPhrase, String owner, Pageable pageable) {
         return chatRepository.search(searchPhrase, owner, pageable);
+    }
+
+    /**
+     * Finds a chat by the given chat ID.
+     *
+     * @param chatId the chat ID
+     * @return an Optional containing the chat, or empty if no chat is found
+     */
+    public Optional<Chat> getChat(String chatId) {
+        return chatRepository.findById(chatId);
     }
 
     /**
