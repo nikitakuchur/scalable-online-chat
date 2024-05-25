@@ -143,7 +143,7 @@ export default function ChatPage() {
 
 	function renderServiceMessage(message: Message) {
 		return (
-			<div key={message.id} className="place-self-center">{message.text}</div>
+			<div key={message.id} className="place-self-center text-gray-500 text-sm">{message.text}</div>
 		);
 	}
 
