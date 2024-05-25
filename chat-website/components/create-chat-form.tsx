@@ -33,7 +33,6 @@ export default function CreateChatForm() {
 
         const response = await jwtFetch('/api/chats', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name, description }),
         })
 

@@ -4,8 +4,15 @@
  */
 export const jwtFetch: typeof fetch = async (url, params) => {
     const accessToken = localStorage.getItem("accessToken");
-    (params?.headers as any)["Authorization"] = `Bearer ${accessToken}`;
-    let data = await fetch(url, params);
+
+    let defaultParams = {
+        headers: {
+            "Authorization": `Bearer ${accessToken}`,
+            "Content-Type": 'application/json',
+        }
+    };
+
+    let data = await fetch(url, {...defaultParams, ...params});
 
     let count = 0;
     while (data.status == 403 && count < 5) {

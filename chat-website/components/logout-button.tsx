@@ -11,12 +11,7 @@ export default function LogoutButton() {
     const { user, setUser } = useContext(AuthContext);
 
     async function handleClick() {
-        const response = await jwtFetch('/api/logout', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
+        const response = await jwtFetch('/api/logout', { method: 'POST' });
 
         if (response.ok) {
             localStorage.removeItem("accessToken");

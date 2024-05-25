@@ -39,7 +39,6 @@ export default function UpdateChatModal(props: UpdateChatModalProps) {
 
         const response = await jwtFetch('/api/chats/' + chatId, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name, description }),
         })
 
@@ -62,10 +61,7 @@ export default function UpdateChatModal(props: UpdateChatModalProps) {
 
         const chatId = props.currentChat.id;
 
-        const response = await jwtFetch('/api/chats/' + chatId, {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-        })
+        const response = await jwtFetch('/api/chats/' + chatId, { method: 'DELETE' });
 
         if (response.ok) {
             props.onDelete();

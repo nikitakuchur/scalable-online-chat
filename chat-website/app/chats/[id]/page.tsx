@@ -9,7 +9,7 @@ import {AuthContext} from "@/app/providers";
 import {useParams} from "next/navigation";
 import {jwtFetch, retrieveTokens} from "@/utils/jwt-fetch";
 import {Spinner} from "@nextui-org/spinner";
-import moment, {now} from "moment";
+import moment, {Moment, now} from "moment";
 
 interface Message {
 	id?: string,
@@ -30,15 +30,11 @@ export default function ChatPage() {
 	const [ text, setText ] = useState<string>("");
 
 	const clientRef = useRef<Client>();
+
 	const [messages, setMessages] = useState<Message[]>([]);
 
 	async function retrieveChatInfo() {
-		const response = await jwtFetch(`/api/chats/${params.id}`, {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
-			}
-		});
+		const response = await jwtFetch(`/api/chats/${params.id}`, { method: 'GET' });
 		if (response.ok) {
 			const chat: Chat = await response.json();
 			setChatName(chat.name);
@@ -93,10 +89,27 @@ export default function ChatPage() {
 		clientRef.current = client;
 	}
 
+	async function loadMessageHistory(startFrom: Moment): Promise<Message[]> {
+		const searchParams = new URLSearchParams({
+			"size": "20",
+			"startFrom": startFrom.toISOString(),
+			"sort": "timestamp,desc"
+		});
+		const url = `/api/chats/${params.id}/messages?` + searchParams;
+		const response = await jwtFetch(url, { method: 'GET' });
+		if (response.ok) {
+			const page = await response.json();
+			return page.content;
+		}
+		console.error("An error occurred while retrieving the chat history.");
+		return [];
+	}
+
 	useEffect(() => {
 		notificationRef.current = new Audio("/notification.mp3");
 
 		retrieveChatInfo()
+			.then(async () => setMessages(await loadMessageHistory(moment())))
 			.then(() => establishConnection());
 
 		return () => {
@@ -150,7 +163,21 @@ export default function ChatPage() {
 	return (
 		<div className="flex flex-col w-full h-full">
 			<h2 className="text-center text-2xl font-bold leading-9 tracking-tight">{chatName}</h2>
-			<div className="p-4 flex flex-col-reverse gap-y-2 flex-nowrap flex-grow overflow-scroll h-96">
+			<div className="p-4 flex flex-col-reverse gap-y-2 flex-nowrap flex-grow overflow-scroll h-96"
+				 onScroll={(event) => {
+					 const scrollHeight = event.currentTarget.scrollHeight;
+					 const clientHeight = event.currentTarget.clientHeight;
+					 const scrollTop = event.currentTarget.scrollTop;
+
+					 if (scrollHeight - clientHeight + scrollTop == 0) {
+						 const lastTimestamp = messages[messages.length - 1].timestamp;
+						 console.log("Loading more messages...");
+						 loadMessageHistory(moment(lastTimestamp))
+							 .then(newMessages => {
+								 setMessages(messages => [...messages, ...newMessages]);
+							 });
+					 }
+				 }}>
 				{messages.map(message =>
 					message.type == "USER_MESSAGE" ? renderUserMessage(message) : renderServiceMessage(message)
 				)}

@@ -41,12 +41,7 @@ export default function ChatList() {
         if (username) {
             params.append("owner", username);
         }
-        const response = await jwtFetch('/api/chats?' + params, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
+        const response = await jwtFetch('/api/chats?' + params, { method: 'GET' });
 
         if (response.ok) {
             return await response.json();
