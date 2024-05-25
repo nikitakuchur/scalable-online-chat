@@ -13,6 +13,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
+
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
@@ -49,7 +51,10 @@ public class ChatController {
     }
 
     @GetMapping("/chats/{id}/messages")
-    public Page<Message> getMessages(@PathVariable String id, Pageable pageable) {
-        return chatService.getMessages(id, pageable);
+    public Page<Message> getMessages(@PathVariable String id, Instant startFrom, Pageable pageable) {
+        if (startFrom == null) {
+            startFrom = Instant.now();
+        }
+        return chatService.getMessages(id, startFrom, pageable);
     }
 }

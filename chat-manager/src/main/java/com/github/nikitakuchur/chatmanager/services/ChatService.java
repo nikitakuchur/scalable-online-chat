@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.Optional;
 
 /**
@@ -114,10 +115,20 @@ public class ChatService {
      * Finds all the messages in the specified chat.
      *
      * @param chatId    the chat ID
+     * @param startFrom the initial time
      * @param pageable  pageable
      * @return a page of messages
      */
-    public Page<Message> getMessages(String chatId, Pageable pageable) {
-        return messageRepository.findAllByChatId(chatId, pageable);
+    public Page<Message> getMessages(String chatId, Instant startFrom, Pageable pageable) {
+        return messageRepository.findAllByChatId(chatId, startFrom, pageable);
+    }
+
+    /**
+     * Saves the given message to the database.
+     *
+     * @param message the message to save
+     */
+    public void saveMessage(Message message) {
+        messageRepository.save(message);
     }
 }

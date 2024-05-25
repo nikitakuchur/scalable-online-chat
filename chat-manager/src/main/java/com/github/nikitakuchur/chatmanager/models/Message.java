@@ -21,8 +21,9 @@ import java.time.Instant;
 public class Message {
     @MongoId
     private String id;
-    private String sender;
     private String chatId;
+    private String sender;
     private String text;
     private Instant timestamp;
+    private String type;
 }

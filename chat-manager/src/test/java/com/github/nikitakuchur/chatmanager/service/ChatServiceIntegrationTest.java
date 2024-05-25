@@ -197,7 +197,7 @@ class ChatServiceIntegrationTest extends IntegrationTest {
 
     @Test
     void getMessagesChatsTest() {
-        Page<Message> messages = chatService.getMessages("1", PageRequest.ofSize(10));
+        Page<Message> messages = chatService.getMessages("1", Instant.now(), PageRequest.ofSize(10));
 
         assertNotNull(messages);
         assertEquals(10, messages.getTotalElements());
