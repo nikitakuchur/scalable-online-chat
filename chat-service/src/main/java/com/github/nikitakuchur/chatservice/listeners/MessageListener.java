@@ -20,7 +20,7 @@ public class MessageListener {
     @KafkaListener(topics = "${chat-service.kafka.message-topic}", groupId = "#{T(java.util.UUID).randomUUID().toString()}")
     public void listenChatMessages(String data) throws JsonProcessingException {
         Message message = objectMapper.readValue(data, Message.class);
-        log.info("A new message has been received. Message: " + message);
+        log.info("A new message has been received. Message: {}", message);
         messagingTemplate.convertAndSend("/topic/" + message.chatId(), data);
     }
 }

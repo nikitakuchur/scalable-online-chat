@@ -15,7 +15,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -73,7 +72,6 @@ public class JwtChannelInterceptor implements ChannelInterceptor {
         List<GrantedAuthority> grantedAuthorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
         Authentication authentication = new UsernamePasswordAuthenticationToken(jwtUser, null, grantedAuthorities);
         accessor.setUser(authentication);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return message;
     }
