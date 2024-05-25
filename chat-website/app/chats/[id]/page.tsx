@@ -16,6 +16,7 @@ interface Message {
 	sender?: string,
 	text: string,
 	timestamp?: string,
+	type?: string,
 }
 
 export default function ChatPage() {
@@ -77,7 +78,9 @@ export default function ChatPage() {
 				client.subscribe(`/topic/${params.id}`, message => {
 					const newMessage: Message = JSON.parse(message.body);
 					setMessages((messages) => [newMessage, ...messages]);
-					playNotification();
+					if (newMessage.type == "USER_MESSAGE") {
+						playNotification();
+					}
 				});
 			},
 			onStompError: frame => {
@@ -98,7 +101,8 @@ export default function ChatPage() {
 
 		return () => {
 			if (clientRef.current != null) {
-				clientRef.current.forceDisconnect();
+				clientRef.current?.unsubscribe(`/topic/${params.id}`);
+				clientRef.current?.deactivate();
 			}
 		}
 	}, []);
@@ -125,18 +129,30 @@ export default function ChatPage() {
 		return timestamp.format("DD.MM.YYYY hh:mm");
 	}
 
+	function renderUserMessage(message: Message) {
+		return (
+			<Card key={message.id} className={"max-w-96 shrink-0 " + (message.sender !== user?.sub ? "self-start" : "self-end")} shadow="sm">
+				{ message.sender !== user?.sub && (<CardHeader className="text-xs pb-0">{message.sender}</CardHeader>)}
+				<CardBody className="flex flex-col gap-x-4 items-end">
+					<p>{message.text}</p>
+					<div className="text-xs pt-0 text-gray-400">{calculateTimestamp(message)}</div>
+				</CardBody>
+			</Card>
+		);
+	}
+
+	function renderServiceMessage(message: Message) {
+		return (
+			<div key={message.id} className="place-self-center">{message.text}</div>
+		);
+	}
+
 	return (
 		<div className="flex flex-col w-full h-full">
 			<h2 className="text-center text-2xl font-bold leading-9 tracking-tight">{chatName}</h2>
 			<div className="p-4 flex flex-col-reverse gap-y-2 flex-nowrap flex-grow overflow-scroll h-96">
 				{messages.map(message =>
-					<Card key={message.id} className={"max-w-96 shrink-0 " + (message.sender !== user?.sub ? "self-start" : "self-end")} shadow="sm">
-						{ message.sender !== user?.sub && (<CardHeader className="text-xs pb-0">{message.sender}</CardHeader>)}
-						<CardBody className="flex flex-col gap-x-4 items-end">
-							<p>{message.text}</p>
-							<div className="text-xs pt-0 text-gray-400">{calculateTimestamp(message)}</div>
-						</CardBody>
-					</Card>
+					message.type == "USER_MESSAGE" ? renderUserMessage(message) : renderServiceMessage(message)
 				)}
 			</div>
 			{ loading && <Spinner className="z-50 absolute inset-0" size="lg" /> }

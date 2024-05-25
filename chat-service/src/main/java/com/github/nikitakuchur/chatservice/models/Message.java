@@ -7,6 +7,7 @@ public record Message(
         String chatId,
         String sender,
         String text,
-        Instant timestamp
+        Instant timestamp,
+        MessageType type
 ) {
 }
