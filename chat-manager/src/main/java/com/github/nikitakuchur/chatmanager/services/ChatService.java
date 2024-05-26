@@ -83,6 +83,7 @@ public class ChatService {
                         throw new UnauthorizedChatDeleteException("The user cannot delete other people's chats.");
                     }
                     chatRepository.delete(chat);
+                    messageRepository.deleteAllByChatId(chatId);
                 }, () -> {
                     throw new ChatNotFoundException("The chat with id=" + chatId + " not found.");
                 });

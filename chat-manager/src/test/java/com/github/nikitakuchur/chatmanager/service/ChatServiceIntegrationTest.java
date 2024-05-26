@@ -20,6 +20,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.Instant;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -140,7 +141,10 @@ class ChatServiceIntegrationTest extends IntegrationTest {
         chatService.deleteChat("1", jwtUser);
 
         Chat chat = mongoTemplate.findById("1", Chat.class);
+        List<Message> messages = mongoTemplate.find(Query.query(Criteria.where("chatId").is("1")), Message.class);
+
         assertNull(chat);
+        assertTrue(messages.isEmpty());
     }
 
     @Test
@@ -168,7 +172,10 @@ class ChatServiceIntegrationTest extends IntegrationTest {
         chatService.deleteChat("1", jwtUser);
 
         Chat chat = mongoTemplate.findById("1", Chat.class);
+        List<Message> messages = mongoTemplate.find(Query.query(Criteria.where("chatId").is("1")), Message.class);
+
         assertNull(chat);
+        assertTrue(messages.isEmpty());
     }
 
     @Test
