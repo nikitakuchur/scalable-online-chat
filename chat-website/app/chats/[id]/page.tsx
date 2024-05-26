@@ -12,11 +12,11 @@ import {Spinner} from "@nextui-org/spinner";
 import moment, {Moment, now} from "moment";
 
 interface Message {
-	id?: string,
-	sender?: string,
+	id: string,
+	sender: string,
 	text: string,
-	timestamp?: string,
-	type?: string,
+	timestamp: string,
+	type: string,
 }
 
 export default function ChatPage() {
@@ -127,10 +127,7 @@ export default function ChatPage() {
 			return;
 		}
 
-		const message: Message = {
-			text: text,
-		};
-		clientRef.current?.publish({ destination: `/app/${params.id}`, body: JSON.stringify(message) });
+		clientRef.current?.publish({ destination: `/app/${params.id}`, body: JSON.stringify({ text }) });
 		setText("");
 	}
 
@@ -147,7 +144,7 @@ export default function ChatPage() {
 			<Card key={message.id} className={"max-w-96 shrink-0 " + (message.sender !== user?.sub ? "self-start" : "self-end")} shadow="sm">
 				{ message.sender !== user?.sub && (<CardHeader className="text-xs pb-0">{message.sender}</CardHeader>)}
 				<CardBody className="flex flex-col gap-x-4 items-end">
-					<p>{message.text}</p>
+					<p className="place-self-start">{message.text}</p>
 					<div className="text-xs pt-0 text-gray-400">{calculateTimestamp(message)}</div>
 				</CardBody>
 			</Card>
