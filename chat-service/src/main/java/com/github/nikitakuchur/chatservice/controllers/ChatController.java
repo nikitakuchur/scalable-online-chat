@@ -1,7 +1,5 @@
 package com.github.nikitakuchur.chatservice.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.nikitakuchur.chatservice.jwt.JwtUser;
 import com.github.nikitakuchur.chatservice.models.Message;
 import com.github.nikitakuchur.chatservice.models.MessageDto;
@@ -37,15 +35,14 @@ public class ChatController {
 
     private static final String CHAT_SERVICE_SENDER = "chat-service";
 
-    private final ObjectMapper objectMapper;
     private final SimpUserRegistry simpUserRegistry;
-    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final KafkaTemplate<String, Message> kafkaTemplate;
 
     @Value("${chat-service.kafka.message-topic}")
     private String messageTopic;
 
     @MessageMapping("/{chatId}")
-    public void handleTextMessage(@DestinationVariable String chatId, Principal principal, MessageDto messageDto) throws JsonProcessingException {
+    public void handleTextMessage(@DestinationVariable String chatId, Principal principal, MessageDto messageDto) {
         JwtUser jwtUser = getJwtUser(principal);
 
         Message message = new Message(
@@ -57,10 +54,8 @@ public class ChatController {
                 MessageType.USER_MESSAGE
         );
 
-        log.info(message.toString());
-
-        String kafkaMessage = objectMapper.writeValueAsString(message);
-        kafkaTemplate.send(messageTopic, kafkaMessage);
+        log.info("Sending a user message to Kafka. Message: {}", message);
+        kafkaTemplate.send(messageTopic, message);
     }
 
     @EventListener
@@ -105,8 +100,8 @@ public class ChatController {
                 MessageType.SERVICE_MESSAGE
         );
 
-        String kafkaMessage = objectMapper.writeValueAsString(message);
-        kafkaTemplate.send(messageTopic, kafkaMessage);
+        log.info("Sending a service message to Kafka. Message: {}", message);
+        kafkaTemplate.send(messageTopic, message);
     }
 
     private JwtUser getJwtUser(Principal principal) {
