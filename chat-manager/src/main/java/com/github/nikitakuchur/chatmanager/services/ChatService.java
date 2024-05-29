@@ -125,11 +125,11 @@ public class ChatService {
     }
 
     /**
-     * Saves the given message to the database.
+     * Saves the given list of messages to the database.
      *
-     * @param message the message to save
+     * @param message a list of messages to save
      */
-    public void saveMessage(Message message) {
-        messageRepository.save(message);
+    public void saveMessages(Iterable<Message> message) {
+        messageRepository.saveAll(message);
     }
 }
