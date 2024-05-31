@@ -2,26 +2,16 @@
 
 import {Textarea} from "@nextui-org/input";
 import {Button} from "@nextui-org/button";
-import {Card, CardBody, CardHeader} from "@nextui-org/card";
-import {FormEvent, useContext, useEffect, useRef, useState} from "react";
+import {FormEvent, useEffect, useRef, useState} from "react";
 import {Client} from "@stomp/stompjs";
-import {AuthContext} from "@/app/providers";
 import {useParams} from "next/navigation";
 import {jwtFetch, retrieveTokens} from "@/utils/jwt-fetch";
 import {Spinner} from "@nextui-org/spinner";
-import moment, {Moment, now} from "moment";
-
-interface Message {
-	id: string,
-	sender: string,
-	text: string,
-	timestamp: string,
-	type: string,
-}
+import moment, {Moment} from "moment";
+import MessageList, {Message} from "@/components/message-list";
 
 export default function ChatPage() {
 	const params = useParams<{ id: string; }>()
-	const { user} = useContext(AuthContext);
 
 	const notificationRef = useRef<HTMLAudioElement>();
 	const [ chatName, setChatName ] = useState<string>("");
@@ -55,6 +45,11 @@ export default function ChatPage() {
 		}
 	}
 
+	async function loadLastMessages() {
+		const lastMessages = await loadMessageHistory(moment())
+		setMessages(lastMessages);
+	}
+
 	function establishConnection() {
 		if (clientRef.current != null) {
 			return () => {};
@@ -68,9 +63,10 @@ export default function ChatPage() {
 					Authorization: `Bearer ${accessToken}`,
 				}
 			},
-			onConnect: () => {
+			onConnect: async () => {
 				console.log("Connected!");
-				setLoading((value) => false);
+				await loadLastMessages();
+				setLoading(() => false);
 				client.subscribe(`/topic/${params.id}`, message => {
 					const newMessage: Message = JSON.parse(message.body);
 					setMessages((messages) => [newMessage, ...messages]);
@@ -109,8 +105,7 @@ export default function ChatPage() {
 		notificationRef.current = new Audio("/notification.mp3");
 
 		retrieveChatInfo()
-			.then(async () => setMessages(await loadMessageHistory(moment())))
-			.then(() => establishConnection());
+			.then(establishConnection);
 
 		return () => {
 			if (clientRef.current != null) {
@@ -123,7 +118,7 @@ export default function ChatPage() {
 	function handleSubmit(event: FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 
-		if (user == null || text.trim() == "") {
+		if (text.trim() == "") {
 			return;
 		}
 
@@ -131,54 +126,15 @@ export default function ChatPage() {
 		setText("");
 	}
 
-	function calculateTimestamp(message: Message) {
-		const timestamp = moment(message.timestamp!);
-		if (timestamp.isSame(now(), 'day')) {
-			return timestamp.format("hh:mm");
-		}
-		return timestamp.format("DD.MM.YYYY hh:mm");
-	}
-
-	function renderUserMessage(message: Message) {
-		return (
-			<Card key={message.id} className={"max-w-96 shrink-0 " + (message.sender !== user?.sub ? "self-start" : "self-end")} shadow="sm">
-				{ message.sender !== user?.sub && (<CardHeader className="text-xs pb-0">{message.sender}</CardHeader>)}
-				<CardBody className="flex flex-col gap-x-4 items-end">
-					<p className="place-self-start">{message.text}</p>
-					<div className="text-xs pt-0 text-gray-400">{calculateTimestamp(message)}</div>
-				</CardBody>
-			</Card>
-		);
-	}
-
-	function renderServiceMessage(message: Message) {
-		return (
-			<div key={message.id} className="place-self-center text-gray-500 text-sm">{message.text}</div>
-		);
-	}
-
 	return (
 		<div className="flex flex-col w-full h-full">
 			<h2 className="text-center text-2xl font-bold leading-9 tracking-tight">{chatName}</h2>
-			<div className="p-4 flex flex-col-reverse gap-y-2 flex-nowrap flex-grow overflow-scroll h-96"
-				 onScroll={(event) => {
-					 const scrollHeight = event.currentTarget.scrollHeight;
-					 const clientHeight = event.currentTarget.clientHeight;
-					 const scrollTop = event.currentTarget.scrollTop;
-
-					 if (scrollHeight - clientHeight + scrollTop == 0) {
-						 const lastTimestamp = messages[messages.length - 1].timestamp;
-						 console.log("Loading more messages...");
-						 loadMessageHistory(moment(lastTimestamp))
-							 .then(newMessages => {
-								 setMessages(messages => [...messages, ...newMessages]);
-							 });
-					 }
-				 }}>
-				{messages.map(message =>
-					message.type == "USER_MESSAGE" ? renderUserMessage(message) : renderServiceMessage(message)
-				)}
-			</div>
+			<MessageList messages={messages} loadMore={lastTimestamp => {
+				loadMessageHistory(moment(lastTimestamp))
+					.then(newMessages => {
+						setMessages(messages => [...messages, ...newMessages]);
+					});
+			}}/>
 			{ loading && <Spinner className="z-50 absolute inset-0" size="lg" /> }
 			<form className="flex flex-row gap-x-2 items-end mb-4" onSubmit={handleSubmit}>
 				<Textarea
