@@ -1,5 +1,5 @@
 # Chat Gateway
-This application is responsible for rate limiting and routing client's requests to other application.
+This application is responsible for rate limiting and routing clients' requests to other application.
 
 ## Technologies Used
 
