@@ -68,6 +68,8 @@ public class ChatController {
         sendServiceMessage(event, chatId, "%s has joined the chat");
     }
 
+    // When a user is disconnected, they are removed from the registry,
+    // so it's important to change the priority to make this listener execute earlier.
     @EventListener
     @Order(Ordered.HIGHEST_PRECEDENCE)
     private void handleSessionDisconnect(SessionDisconnectEvent event) {
