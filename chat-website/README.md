@@ -21,6 +21,14 @@ You can use one of them `npm`, `yarn`, `pnpm`, `bun`, Example using `npm`:
 ```bash
 npm install
 ```
+### Set the environment properties
+If you want to run the application locally, use the following values:
+
+```bash
+export API_URL=http://localhost:8082
+export NEXT_PUBLIC_WS_API_URL=ws://localhost:8082/ws
+```
+You can also create the `.env.local` file and put the properties in it.
 
 ### Run the development server
 
