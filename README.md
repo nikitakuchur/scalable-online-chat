@@ -1,6 +1,6 @@
 # Scalable Online Chat
 
-This chat application is designed using a microservices architecture to ensure scalability, flexibility, and reliability.
+This chat application was developed primarily to demonstrate how this particular problem can be addressed using a microservices architecture to ensure scalability, flexibility, and reliability. If you are currently implementing a similar system, feel free to use this project as an example.
 
 ![Imgur](https://i.imgur.com/8z0mZtA.png)
 
